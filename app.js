@@ -1,9 +1,9 @@
-/* ===== Nexo Digital — render desde data.js (window.SITE) ===== */
+/* ===== DigitaNexoSpain — render desde data.js (window.SITE) ===== */
 (function () {
   "use strict";
   const S = window.SITE;
-  if (!S || !S.METODOS) { console.error("No se pudo cargar data.js"); return; }
-  const { META, CATEGORIAS, METODOS } = S;
+  if (!S || !S.SERVICIOS) { console.error("No se pudo cargar data.js"); return; }
+  const { META, CATEGORIAS, SERVICIOS } = S;
 
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => Array.from(document.querySelectorAll(sel));
@@ -18,8 +18,7 @@
   /* ---------- marca + contacto ---------- */
   function setupMeta() {
     document.title = `${META.marca} — ${META.eslogan}`;
-    const names = $$(".brand-name");
-    names.forEach((n) => { n.innerHTML = esc(META.marca.replace(/^(.*?)([A-ZÁÉÍÓÚÑ][a-záéíóúñ]*)$/, "$1<span>$2</span>")); });
+    $$(".brand-name").forEach((n) => { n.textContent = META.marca; });
     $("#footerTag").textContent = META.eslogan + ".";
     $("#year").textContent = META.annio || new Date().getFullYear();
     $("#emailText").textContent = META.email;
@@ -30,11 +29,11 @@
 
   /* ---------- hero destacado ---------- */
   function renderHero() {
-    const destacados = [8, 1, 24, 7, 18, 26].map((id) => METODOS.find((m) => m.id === id)).filter(Boolean);
-    $("#heroList").innerHTML = destacados.map((m) => {
-      const c = catOf(m.categoria);
-      return `<li><span class="cat-dot" style="background:${c.color}"></span>${esc(m.nombre)}<span class="price-tag">${esc(m.precio)}</span></li>`;
-    }).join("");
+    const ids = [8, 1, 24, 7, 18, 26];
+    const dest = ids.map((id) => SERVICIOS.find((s) => s.id === id)).filter(Boolean);
+    $("#heroList").innerHTML = dest.map((s) =>
+      `<li><span class="cat-dot" style="background:${s.color}"></span>${esc(s.nombre)}<span class="price-tag">${esc(s.precio)}</span></li>`
+    ).join("");
   }
 
   /* ---------- filtros ---------- */
@@ -53,51 +52,45 @@
 
   /* ---------- grid ---------- */
   function filtrar() {
-    return METODOS.filter((m) => {
-      const okCat = filtroCategoria === "todos" || m.categoria === filtroCategoria;
+    return SERVICIOS.filter((s) => {
+      const okCat = filtroCategoria === "todos" || s.categoria === filtroCategoria;
       const q = termino.toLowerCase();
-      const okTerm = !q || [m.nombre, m.resumen, m.categoria, m.cliente].join(" ").toLowerCase().includes(q);
+      const okTerm = !q || [s.nombre, s.descripcion, s.cat, s.publico].join(" ").toLowerCase().includes(q);
       return okCat && okTerm;
     });
   }
 
   function renderGrid() {
     const lista = filtrar();
-    $("#totalServicios").textContent = METODOS.length;
-    $("#statServicios").textContent = METODOS.length;
+    $("#totalServicios").textContent = SERVICIOS.length;
+    $("#statServicios").textContent = SERVICIOS.length;
     if (!lista.length) { $("#grid").innerHTML = ""; $("#empty").hidden = false; return; }
     $("#empty").hidden = true;
     $("#grid").innerHTML = lista.map(cardHTML).join("");
     $$("#grid .card").forEach((c) => c.addEventListener("click", () => abrirModal(Number(c.dataset.id))));
   }
 
-  function cardHTML(m) {
-    const c = catOf(m.categoria);
-    const origen = m.origen === "deepseek"
-      ? `<span class="origin-badge origin-deepseek">DeepSeek</span>`
-      : `<span class="origin-badge origin-nuevo">Nuevo</span>`;
+  function cardHTML(s) {
     return `
-      <article class="card" data-id="${m.id}">
-        ${origen}
+      <article class="card" data-id="${s.id}">
         <div class="card-top">
-          <div class="card-ico" style="background:${c.color}22">${c.icono}</div>
-          <span class="card-cat">${esc(c.nombre)}</span>
+          <div class="card-ico" style="background:${s.color}22">${s.icono}</div>
+          <span class="card-cat">${esc(s.cat)}</span>
         </div>
-        <h3>${esc(m.nombre)}</h3>
-        <p>${esc(m.resumen)}</p>
+        <h3>${esc(s.nombre)}</h3>
+        <p>${esc(s.descripcion)}</p>
         <div class="card-foot">
-          <span class="price">${esc(m.precio)}</span>
+          <span class="price">${esc(s.precio)}</span>
           <span class="ver">Ver detalles →</span>
         </div>
       </article>`;
   }
 
-  /* ---------- modal ---------- */
+  /* ---------- modal (solo datos públicos) ---------- */
   function abrirModal(id) {
-    const m = METODOS.find((x) => x.id === id);
-    if (!m) return;
-    const c = catOf(m.categoria);
-    $("#modalBody").innerHTML = modalHTML(m, c);
+    const s = SERVICIOS.find((x) => x.id === id);
+    if (!s) return;
+    $("#modalBody").innerHTML = modalHTML(s);
     $("#modal").classList.add("open");
     document.body.style.overflow = "hidden";
     $("#modal").querySelector(".modal-panel").scrollTop = 0;
@@ -107,49 +100,24 @@
     document.body.style.overflow = "";
   }
 
-  function bloque(titulo, contenido) {
-    return `<div class="modal-section"><h3>${titulo}</h3>${contenido}</div>`;
-  }
-  function modalHTML(m, c) {
-    const origen = m.origen === "deepseek" ? "Método de la conversación con DeepSeek" : "Método nuevo (creado y verificado)";
-    const pasos = `<ol>${m.pasos.map((p) => `<li>${esc(p)}</li>`).join("")}</ol>`;
-    const mats = `<div class="modal-tags">${m.materiales.map((x) => `<span class="modal-tag">${esc(x)}</span>`).join("")}</div>`;
-    const prompts = m.prompts && m.prompts.length
-      ? m.prompts.map((p) => `<h3 style="margin-top:14px">${esc(p.titulo)}</h3><pre>${esc(p.texto)}</pre>`).join("")
-      : "<p>—</p>";
-    const copys = m.copys && m.copys.length
-      ? m.copys.map((cp) => `<h3 style="margin-top:14px">${esc(cp.titulo)}</h3><pre>${esc(cp.texto)}</pre>`).join("")
-      : "<p>—</p>";
-    const codigo = m.codigo
-      ? `<h3 style="margin-top:14px">Código incluido: <code class="inline">${esc(m.codigo.archivo)}</code></h3><pre>${esc(m.codigo.contenido)}</pre>`
-      : "";
-    const tabla = `
-      <div class="modal-tags" style="margin-top:4px">
-        <span class="modal-tag">⏱️ ${esc(m.tiempo)}</span>
-        <span class="modal-tag">📊 ${esc(m.dificultad)}</span>
-        <span class="modal-tag">💶 Primer euro: ${esc(m.primerEuro)}</span>
-        <span class="modal-tag">💳 ${esc(m.cobro)}</span>
-      </div>`;
+  function modalHTML(s) {
     return `
       <div class="modal-head">
-        <div class="modal-ico" style="background:${c.color}22">${c.icono}</div>
+        <div class="modal-ico" style="background:${s.color}22">${s.icono}</div>
         <div>
-          <div class="modal-cat">${esc(c.nombre)} · ${origen}</div>
-          <h2>${esc(m.nombre)}</h2>
+          <div class="modal-cat">${esc(s.cat)}</div>
+          <h2>${esc(s.nombre)}</h2>
         </div>
       </div>
-      <div class="modal-price">${esc(m.precio)}</div>
-      ${bloque("Qué es", `<p>${esc(m.resumen)}</p>`)}
-      ${bloque("Quién paga", `<p>${esc(m.cliente)}</p>`)}
-      ${bloque("Datos clave", tabla)}
-      ${bloque("Material necesario", mats)}
-      ${bloque("Paso a paso", pasos)}
-      ${bloque("Prompts listos", prompts)}
-      ${bloque("Mensajes de captación", copys)}
-      ${bloque("Automatización", `<p>${esc(m.automatizacion)}</p>${codigo}`)}
-      ${bloque("Dónde encontrar clientes", `<p>${esc(m.clientes)}</p>`)}
-      ${m.planB ? bloque("Plan B", `<p>${esc(m.planB)}</p>`) : ""}
-      ${bloque("Verificación y viabilidad", `<p>${esc(m.verificacion)}</p>`)}
+      <div class="modal-price">${esc(s.precio)}</div>
+      <div class="modal-section">
+        <h3>Qué es</h3>
+        <p>${esc(s.descripcion)}</p>
+      </div>
+      <div class="modal-section">
+        <h3>Para quién está enfocado</h3>
+        <p>${esc(s.publico)}</p>
+      </div>
       <div class="cta-row">
         <a class="btn btn-primary" href="#contacto" data-close>Solicitar este servicio</a>
         <button class="btn btn-ghost" data-close>Cerrar</button>
@@ -157,27 +125,31 @@
   }
 
   /* ---------- tarifas ---------- */
+  function precioNum(p) {
+    const m = String(p).match(/(\d+)/);
+    return m ? parseInt(m[1], 10) : 0;
+  }
   function renderPriceBands() {
     const bands = [
-      { id: "micro", ico: "🪙", label: "Micro", range: "5 – 19 €", test: (m) => m.precioBase > 0 && m.precioBase <= 19 },
-      { id: "std", ico: "📦", label: "Estándar", range: "20 – 39 €", test: (m) => m.precioBase >= 20 && m.precioBase <= 39 },
-      { id: "prem", ico: "💎", label: "Premium", range: "40 – 99 €", test: (m) => m.precioBase >= 40 && m.precioBase <= 99 },
-      { id: "rec", ico: "🔁", label: "Recurrente / pasivo", range: "29 – 149 €/mes", test: (m) => m.precioBase === 0 || /\/mes|recurrente|royalt|ingreso|margen|comisión|CPM/i.test(m.precio) },
+      { id: "micro", ico: "🪙", label: "Servicios básicos", range: "5 – 19 €", test: (s) => { const n = precioNum(s.precio); return n > 0 && n < 20; } },
+      { id: "std", ico: "📦", label: "Servicios estándar", range: "20 – 49 €", test: (s) => { const n = precioNum(s.precio); return n >= 20 && n < 50; } },
+      { id: "prem", ico: "💎", label: "Servicios premium", range: "50 – 199 €", test: (s) => { const n = precioNum(s.precio); return n >= 50 && n < 200; } },
+      { id: "rec", ico: "🔁", label: "Mensuales / por unidad", range: "desde 29 €/mes", test: (s) => /\/mes|mes|hora|min|reel|vídeo|video|episodio|pista|lead|%|foto|sesión/.test(s.precio) && !/^desde/.test(s.precio) },
     ];
     $("#priceBands").innerHTML = bands.map((b) => {
-      const n = METODOS.filter(b.test).length;
+      const n = SERVICIOS.filter(b.test).length;
       return `<div class="band"><div class="band-ico">${b.ico}</div><h4>${b.label}</h4><div class="band-range">${b.range}</div><div class="band-count">${n} servicios</div></div>`;
     }).join("");
   }
 
   /* ---------- FAQ ---------- */
   const FAQ = [
-    { q: "¿Cómo empiezo si nunca he contratado un servicio digital?", a: "Muy fácil: escríbenos por email o WhatsApp contándonos qué necesitas. Te proponemos un servicio concreto y, en la mayoría de casos, una muestra gratuita para que veas la calidad antes de pagar." },
-    { q: "¿Cuánto tardáis en entregar?", a: "La mayoría de servicios se entregan en 24-72 horas. Los proyectos más grandes (pitch decks, tiendas online, SOPs) pueden tardar hasta 5 días. Siempre te damos el plazo exacto en el presupuesto." },
-    { q: "¿Cómo se paga?", a: "Aceptamos Bizum, PayPal y transferencia. En servicios de mayor importe se paga el 50% por adelantado y el resto al entregar. Todo queda claro en el presupuesto antes de empezar." },
+    { q: "¿Cómo empiezo si nunca he contratado un servicio digital?", a: "Muy fácil: escríbenos por email o WhatsApp contándonos qué necesitas. Te proponemos el servicio adecuado y, en la mayoría de casos, una muestra gratuita para que veas la calidad antes de pagar." },
+    { q: "¿Cuánto tardáis en entregar?", a: "La mayoría de servicios se entregan en 24-72 horas. Los proyectos más grandes pueden tardar hasta 5 días. Siempre te damos el plazo exacto en el presupuesto." },
+    { q: "¿Cómo se paga?", a: "Aceptamos Bizum, PayPal y transferencia. En servicios de mayor importe se paga el 50% por adelantado y el resto al entregar." },
     { q: "¿Hay garantía o revisiones?", a: "Sí. Incluimos ajustes hasta que el resultado encaje con lo que necesitas. Si algo no te convence, lo corregimos sin coste adicional." },
-    { q: "¿Trabajáis con IA o con personas?", a: "Con ambas: usamos IA para acelerar la producción y una persona revisa y ajusta cada entrega para garantizar calidad y que suene humano. Nada se entrega sin revisión." },
-    { q: "¿Atendéis fuera de España?", a: "Sí, trabajamos 100% online. Todos los entregables se comparten por correo o Drive, y cobramos por PayPal o transferencia internacional." },
+    { q: "¿Atendéis fuera de España?", a: "Sí, trabajamos 100% online. Todos los entregables se comparten por correo o Drive." },
+    { q: "¿Puedo ver un ejemplo antes de contratar?", a: "Claro. Pide una muestra gratuita del servicio que te interese y te enseñamos un ejemplo real antes de pagar." },
   ];
   function renderFAQ() {
     $("#faqList").innerHTML = FAQ.map((f, i) => `
@@ -197,7 +169,7 @@
   function renderForm() {
     const sel = $("#fServicio");
     sel.innerHTML = '<option value="">— Elige un servicio (o escríbelo en el mensaje) —</option>' +
-      METODOS.map((m) => `<option value="${esc(m.nombre)}">${esc(m.nombre)}</option>`).join("");
+      SERVICIOS.map((s) => `<option value="${esc(s.nombre)}">${esc(s.nombre)}</option>`).join("");
     $("#contactForm").addEventListener("submit", (e) => {
       e.preventDefault();
       const nombre = $("#fNombre").value.trim();
