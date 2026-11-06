@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nexo Digital — 60 Servicios Digitales para Autónomos, Pymes y Creadores</title>
+  <meta name="description" content="Suite de 60 servicios digitales para generar ingresos y hacer crecer tu negocio: marketing, automatización, contenidos, productos digitales y más. Tarifas claras en euros y entrega rápida." />
+  <meta name="theme-color" content="#4f46e5" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Nexo Digital — 60 Servicios Digitales" />
+  <meta property="og:description" content="Servicios digitales para autónomos, pymes y creadores. Tarifas en euros, entrega rápida y contacto directo." />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="es_ES" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    "name": "Nexo Digital",
+    "description": "Servicios digitales para autónomos, pymes y creadores: marketing, automatización, contenidos y productos digitales.",
+    "priceRange": "€€",
+    "areaServed": "España y online",
+    "currenciesAccepted": "EUR"
+  }
+  </script>
+</head>
+<body>
+  <!-- ===== Header ===== -->
+  <header class="header" id="header">
+    <div class="container header-inner">
+      <a class="brand" href="#top">
+        <span class="brand-mark">◆</span>
+        <span class="brand-name">Nexo<span>Digital</span></span>
+      </a>
+      <nav class="nav" id="nav">
+        <a href="#servicios">Servicios</a>
+        <a href="#como-funciona">Cómo funciona</a>
+        <a href="#tarifas">Tarifas</a>
+        <a href="#faq">FAQ</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
+      <a class="btn btn-primary btn-nav" href="#contacto">Pedir presupuesto</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Abrir menú">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===== Hero ===== -->
+  <section class="hero" id="top">
+    <div class="container hero-inner">
+      <div class="hero-copy">
+        <span class="badge">💼 60 servicios · 100% online · Sin inversión para ti</span>
+        <h1>Todo lo digital que tu negocio necesita, <span>en un solo lugar.</span></h1>
+        <p class="hero-sub">
+          Marketing, automatización, contenidos, productos digitales y servicios para pymes.
+          Lo hacemos por ti, con tarifas claras en euros y entrega rápida.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-lg" href="#servicios">Ver los 60 servicios</a>
+          <a class="btn btn-ghost btn-lg" href="#contacto">Hablar con nosotros</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat"><strong id="statServicios">60</strong><span>servicios</span></div>
+          <div class="stat"><strong>24-72h</strong><span>entrega media</span></div>
+          <div class="stat"><strong>0 €</strong><span>para arrancar</span></div>
+          <div class="stat"><strong>100%</strong><span>online</span></div>
+        </div>
+      </div>
+      <div class="hero-card">
+        <div class="hero-card-head">✦ Servicios destacados</div>
+        <ul id="heroList" class="hero-list">
+          <li>… cargando</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Servicios ===== -->
+  <section class="services" id="servicios">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Catálogo completo</span>
+        <h2>Elige entre <span id="totalServicios">60</span> servicios</h2>
+        <p>Filtra por categoría o busca lo que necesitas. Haz clic en cualquier servicio para ver el detalle, precio y qué incluye.</p>
+      </div>
+
+      <div class="toolbar">
+        <input type="search" id="searchInput" class="search" placeholder="Buscar un servicio… (ej. CV, Instagram, leads, logo)" />
+      </div>
+      <div class="filters" id="filters">
+        <button class="chip active" data-cat="todos">Todos</button>
+      </div>
+
+      <div class="grid" id="grid"><!-- tarjetas generadas por JS --></div>
+      <div class="empty" id="empty" hidden>
+        <p>😕 No encontramos servicios con ese criterio. Prueba otra búsqueda.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Cómo funciona ===== -->
+  <section class="how" id="como-funciona">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Proceso simple</span>
+        <h2>Cómo trabajamos</h2>
+        <p>Cuatro pasos, sin fricción. Tú describes lo que necesitas, nosotros lo entregamos.</p>
+      </div>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><h3>Contactas</h3><p>Por email, WhatsApp o el formulario. Cuéntanos qué necesitas.</p></div>
+        <div class="step"><div class="step-num">2</div><h3>Presupuesto</h3><p>Te enviamos precio fijo y plazo de entrega en menos de 24 h.</p></div>
+        <div class="step"><div class="step-num">3</div><h3>Ejecutamos</h3><p>Trabajamos el entregable con IA + revisión humana de calidad.</p></div>
+        <div class="step"><div class="step-num">4</div><h3>Entregamos</h3><p>Recibes el resultado listo para usar. Ajustes incluidos hasta que encaje.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Tarifas ===== -->
+  <section class="pricing" id="tarifas">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Tarifas claras</span>
+        <h2>Precios en euros, sin sorpresas</h2>
+        <p>La mayoría de servicios funcionan con <strong>prueba gratis</strong> (a cambio de testimonio) y luego tarifa fija. Pagos por Bizum, PayPal o tarjeta.</p>
+      </div>
+      <div class="price-bands" id="priceBands"><!-- generado por JS --></div>
+      <p class="pricing-note">💡 <strong>¿Primera vez?</strong> Pide una <em>muestra gratuita</em> de cualquier servicio antes de pagar. Así ves la calidad sin riesgo.</p>
+    </div>
+  </section>
+
+  <!-- ===== Garantías ===== -->
+  <section class="trust">
+    <div class="container trust-inner">
+      <div class="trust-item">⚡ <div><strong>Entrega rápida</strong><span>24-72 h en la mayoría de servicios</span></div></div>
+      <div class="trust-item">🎯 <div><strong>Hecho a medida</strong><span>Nada de plantillas genéricas sin contexto</span></div></div>
+      <div class="trust-item">🔁 <div><strong>Ajustes incluidos</strong><span>Revisamos hasta que el resultado encaje</span></div></div>
+      <div class="trust-item">🔒 <div><strong>Pago seguro</strong><span>Bizum, PayPal o tarjeta</span></div></div>
+    </div>
+  </section>
+
+  <!-- ===== FAQ ===== -->
+  <section class="faq" id="faq">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Preguntas frecuentes</span>
+        <h2>Resolvemos tus dudas</h2>
+      </div>
+      <div class="faq-list" id="faqList"><!-- generado por JS --></div>
+    </div>
+  </section>
+
+  <!-- ===== Contacto ===== -->
+  <section class="contact" id="contacto">
+    <div class="container contact-inner">
+      <div class="contact-copy">
+        <span class="eyebrow">Contacto</span>
+        <h2>Cuéntanos qué necesitas</h2>
+        <p>Respondemos en menos de 24 h laborables. Elige el canal que prefieras:</p>
+        <div class="contact-channels">
+          <a class="channel" id="emailLink" href="mailto:hola@nexodigital.es">
+            <span class="channel-ico">✉️</span>
+            <div><strong>Email</strong><span id="emailText">hola@nexodigital.es</span></div>
+          </a>
+          <a class="channel" id="whatsappLink" href="#" target="_blank" rel="noopener">
+            <span class="channel-ico">💬</span>
+            <div><strong>WhatsApp</strong><span>Respuesta rápida</span></div>
+          </a>
+        </div>
+      </div>
+      <form class="contact-form" id="contactForm">
+        <label>Nombre
+          <input type="text" id="fNombre" required placeholder="Tu nombre" />
+        </label>
+        <label>Email
+          <input type="email" id="fEmail" required placeholder="tu@email.com" />
+        </label>
+        <label>¿Qué servicio te interesa?
+          <select id="fServicio"></select>
+        </label>
+        <label>Mensaje
+          <textarea id="fMensaje" rows="4" required placeholder="Cuéntanos qué necesitas…"></textarea>
+        </label>
+        <button type="submit" class="btn btn-primary btn-lg">Enviar mensaje</button>
+        <p class="form-note">Se abrirá tu app de correo con el mensaje preparado. También puedes escribirnos directamente.</p>
+      </form>
+    </div>
+  </section>
+
+  <!-- ===== Footer ===== -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="brand brand-footer">
+        <span class="brand-mark">◆</span>
+        <span class="brand-name">Nexo<span>Digital</span></span>
+      </div>
+      <p class="footer-tag" id="footerTag">Servicios digitales para autónomos, pymes y creadores.</p>
+      <div class="footer-links">
+        <a href="#servicios">Servicios</a>
+        <a href="#tarifas">Tarifas</a>
+        <a href="#contacto">Contacto</a>
+      </div>
+      <p class="footer-legal">© <span id="year">2026</span> Nexo Digital · España · Servicio 100% online</p>
+    </div>
+  </footer>
+
+  <!-- ===== Modal ===== -->
+  <div class="modal" id="modal" aria-hidden="true">
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-panel" role="dialog" aria-modal="true">
+      <button class="modal-close" data-close aria-label="Cerrar">×</button>
+      <div class="modal-body" id="modalBody"><!-- generado por JS --></div>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
