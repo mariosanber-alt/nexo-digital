@@ -3,7 +3,7 @@
 Agencia de servicios digitales: marketing, automatización, contenidos y productos digitales. Tarifas claras en euros y entrega rápida.
 
 > 🌐 **Web:** https://mariosanber-alt.github.io/nexo-digital/
-> ✉️ **Contacto:** hola@diganexospain.es · WhatsApp: +34622677999
+> ✉️ **Contacto:** mariosanber@gmail.com · WhatsApp: +34622677999
 
 ## Servicios
 
