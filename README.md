@@ -14,4 +14,4 @@ Catálogo de 60 servicios digitales con tarifas en euros. Todo 100% online, con 
 - `index.html`, `styles.css`, `app.js`, `data.js` — la web pública.
 - `.github/workflows/pages.yml` — despliegue automático en GitHub Pages.
 
-> El material de trabajo interno (guías, prompts, automatización) no está en este repositorio público.
+> El material de trabajo interno no está publicado en este repositorio.
