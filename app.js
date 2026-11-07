@@ -170,15 +170,47 @@
     const sel = $("#fServicio");
     sel.innerHTML = '<option value="">— Elige un servicio (o escríbelo en el mensaje) —</option>' +
       SERVICIOS.map((s) => `<option value="${esc(s.nombre)}">${esc(s.nombre)}</option>`).join("");
-    $("#contactForm").addEventListener("submit", (e) => {
+    $("#contactForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const nombre = $("#fNombre").value.trim();
       const email = $("#fEmail").value.trim();
       const servicio = $("#fServicio").value;
       const mensaje = $("#fMensaje").value.trim();
+      const status = $("#formStatus");
+      const solicitud = `Nombre: ${nombre}\nEmail: ${email}\nServicio: ${servicio || "por definir"}\n\nMensaje:\n${mensaje}`;
+      const payload = { solicitud, origen: "web", extra: { nombre, email, servicio } };
+      if (META.webhookToken) payload.token = META.webhookToken;
+
+      // 1) Intentar enviar al software (webhook)
+      if (META.webhookUrl) {
+        status.textContent = "Enviando solicitud…";
+        status.style.color = "#8a8fa8";
+        try {
+          const ctrl = new AbortController();
+          const timer = setTimeout(() => ctrl.abort(), 5000);
+          const r = await fetch(META.webhookUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+            signal: ctrl.signal,
+          });
+          clearTimeout(timer);
+          const data = await r.json().catch(() => ({}));
+          if (r.ok && data.ok) {
+            status.textContent = "✔ Solicitud enviada correctamente. Te contactaremos en menos de 24 h.";
+            status.style.color = "#059669";
+            $("#contactForm").reset();
+            return;
+          }
+          throw new Error(data.error || ("HTTP " + r.status));
+        } catch (err) {
+          status.textContent = "";
+        }
+      }
+
+      // 2) Fallback: abrir el correo con el mensaje preparado
       const asunto = "Presupuesto — " + (servicio || "consulta general");
-      const cuerpo = `Hola ${META.marca},\n\nNombre: ${nombre}\nEmail: ${email}\nServicio: ${servicio || "por definir"}\n\nMensaje:\n${mensaje}`;
-      window.location.href = "mailto:" + META.email + "?subject=" + encodeURIComponent(asunto) + "&body=" + encodeURIComponent(cuerpo);
+      window.location.href = "mailto:" + META.email + "?subject=" + encodeURIComponent(asunto) + "&body=" + encodeURIComponent(solicitud);
     });
   }
 
