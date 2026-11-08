@@ -7,7 +7,7 @@ Agencia de servicios digitales: marketing, automatización, contenidos y product
 
 ## Servicios
 
-Catálogo de 60 servicios digitales con tarifas en euros. Todo 100% online, con entrega rápida y ajustes incluidos.
+Catálogo de 61 servicios digitales con tarifas en euros. Todo 100% online, con entrega rápida y ajustes incluidos.
 
 ## Repositorio
 
