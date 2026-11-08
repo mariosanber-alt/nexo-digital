@@ -218,7 +218,10 @@
   function setupNav() {
     $("#navToggle").addEventListener("click", () => $("#nav").classList.toggle("open"));
     $$("#nav a").forEach((a) => a.addEventListener("click", () => $("#nav").classList.remove("open")));
-    $$("#modal [data-close]").forEach((el) => el.addEventListener("click", cerrarModal));
+    // Delegación: cierra el modal con CUALQUIER elemento [data-close] (estático o dinámico)
+    $("#modal").addEventListener("click", (e) => {
+      if (e.target.closest("[data-close]")) cerrarModal();
+    });
     document.addEventListener("keydown", (e) => { if (e.key === "Escape") cerrarModal(); });
   }
 
