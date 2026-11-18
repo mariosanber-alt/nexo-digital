@@ -164,9 +164,9 @@
         <h2>Cuéntanos qué necesitas</h2>
         <p>Respondemos en menos de 24 h laborables. Elige el canal que prefieras:</p>
         <div class="contact-channels">
-          <a class="channel" id="emailLink" href="mailto:mariosanber@gmail.com">
+          <a class="channel" id="emailLink" href="mailto:digitanexospain@gmail.com">
             <span class="channel-ico">✉️</span>
-            <div><strong>Email</strong><span id="emailText">mariosanber@gmail.com</span></div>
+            <div><strong>Email</strong><span id="emailText">digitanexospain@gmail.com</span></div>
           </a>
           <a class="channel" id="whatsappLink" href="#" target="_blank" rel="noopener">
             <span class="channel-ico">💬</span>
@@ -174,21 +174,24 @@
           </a>
         </div>
       </div>
-      <form class="contact-form" id="contactForm">
+      <form class="contact-form" id="contactForm" action="/api/contact" method="post" data-contact-form data-contact-email="digitanexospain@gmail.com">
         <label>Nombre
-          <input type="text" id="fNombre" required placeholder="Tu nombre" />
+          <input type="text" id="fNombre" name="name" maxlength="120" required placeholder="Tu nombre" />
         </label>
         <label>Email
-          <input type="email" id="fEmail" required placeholder="tu@email.com" />
+          <input type="email" id="fEmail" name="email" maxlength="254" required placeholder="tu@email.com" />
         </label>
         <label>¿Qué servicio te interesa?
-          <select id="fServicio"></select>
+          <select id="fServicio" name="service"></select>
         </label>
         <label>Mensaje
-          <textarea id="fMensaje" rows="4" required placeholder="Cuéntanos qué necesitas…"></textarea>
+          <textarea id="fMensaje" name="message" maxlength="4000" rows="4" required placeholder="Cuéntanos qué necesitas…"></textarea>
         </label>
-        <button type="submit" class="btn btn-primary btn-lg">Enviar mensaje</button>
-        <p class="form-note" id="formStatus" role="status" aria-live="polite">Al enviar, la solicitud se conectará con nuestro sistema de gestión. Si no está disponible, se abrirá tu correo con el mensaje preparado.</p>
+        <label class="form-note"><span><input type="checkbox" name="consent" required> He leído la <a href="privacidad.html">información de privacidad</a> para responder a mi consulta.</span></label>
+        <label hidden style="display:none" aria-hidden="true">Web<input name="website" tabindex="-1" autocomplete="off"></label>
+        <div data-contact-challenge></div>
+        <button type="submit" class="btn btn-primary btn-lg" disabled>Enviar mensaje</button>
+        <p class="form-note" id="formStatus" data-contact-status role="status" aria-live="polite">Comprobando disponibilidad del formulario…</p>
       </form>
     </div>
   </section>
@@ -205,15 +208,17 @@
         <a href="#servicios">Servicios</a>
         <a href="#tarifas">Tarifas</a>
         <a href="#contacto">Contacto</a>
+        <a href="privacidad.html">Privacidad</a>
+        <a href="aviso-legal.html">Aviso legal</a>
       </div>
       <p class="footer-legal">© <span id="year">2026</span> DigitaNexoSpain · España · Servicio 100% online</p>
     </div>
   </footer>
 
   <!-- ===== Modal ===== -->
-  <div class="modal" id="modal" aria-hidden="true">
+  <div class="modal" id="modal" aria-hidden="true" inert>
     <div class="modal-backdrop" data-close></div>
-    <div class="modal-panel" role="dialog" aria-modal="true">
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="serviceTitle">
       <button class="modal-close" data-close aria-label="Cerrar">×</button>
       <div class="modal-body" id="modalBody"><!-- generado por JS --></div>
     </div>
@@ -221,5 +226,6 @@
 
   <script src="data.js"></script>
   <script src="app.js"></script>
+  <script src="contacto.js" defer></script>
 </body>
 </html>

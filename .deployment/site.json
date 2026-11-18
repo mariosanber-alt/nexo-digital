@@ -1,0 +1,16 @@
+{
+  "name": "nexo-digital",
+  "pages": [
+    "index.html",
+    "privacidad.html",
+    "aviso-legal.html"
+  ],
+  "assets": [
+    "styles.css",
+    "app.js",
+    "data.js",
+    "contacto.js"
+  ],
+  "directories": [],
+  "legalReady": false
+}
