@@ -67,12 +67,17 @@
     if (!lista.length) { $("#grid").innerHTML = ""; $("#empty").hidden = false; return; }
     $("#empty").hidden = true;
     $("#grid").innerHTML = lista.map(cardHTML).join("");
-    $$("#grid .card").forEach((c) => c.addEventListener("click", () => abrirModal(Number(c.dataset.id))));
+    $$("#grid .card").forEach((c) => {
+      c.addEventListener("click", () => abrirModal(Number(c.dataset.id)));
+      c.addEventListener("keydown", event => {
+        if (event.key === "Enter" || event.key === " ") { event.preventDefault(); abrirModal(Number(c.dataset.id)); }
+      });
+    });
   }
 
   function cardHTML(s) {
     return `
-      <article class="card" data-id="${s.id}">
+      <article class="card" data-id="${s.id}" tabindex="0" role="button" aria-label="Ver detalles: ${esc(s.nombre)}">
         <div class="card-top">
           <div class="card-ico" style="background:${s.color}22">${s.icono}</div>
           <span class="card-cat">${esc(s.cat)}</span>
@@ -87,16 +92,24 @@
   }
 
   /* ---------- modal (solo datos públicos) ---------- */
+  let modalTrigger = null;
   function abrirModal(id) {
     const s = SERVICIOS.find((x) => x.id === id);
     if (!s) return;
+    modalTrigger = document.activeElement;
     $("#modalBody").innerHTML = modalHTML(s);
     $("#modal").classList.add("open");
+    $("#modal").setAttribute("aria-hidden", "false");
+    $("#modal").inert = false;
+    $(".modal-close").focus();
     document.body.style.overflow = "hidden";
     $("#modal").querySelector(".modal-panel").scrollTop = 0;
   }
   function cerrarModal() {
+    if (modalTrigger) modalTrigger.focus();
     $("#modal").classList.remove("open");
+    $("#modal").setAttribute("aria-hidden", "true");
+    $("#modal").inert = true;
     document.body.style.overflow = "";
   }
 
@@ -106,7 +119,7 @@
         <div class="modal-ico" style="background:${s.color}22">${s.icono}</div>
         <div>
           <div class="modal-cat">${esc(s.cat)}</div>
-          <h2>${esc(s.nombre)}</h2>
+          <h2 id="serviceTitle">${esc(s.nombre)}</h2>
         </div>
       </div>
       <div class="modal-price">${esc(s.precio)}</div>
@@ -170,59 +183,29 @@
     const sel = $("#fServicio");
     sel.innerHTML = '<option value="">— Elige un servicio (o escríbelo en el mensaje) —</option>' +
       SERVICIOS.map((s) => `<option value="${esc(s.nombre)}">${esc(s.nombre)}</option>`).join("");
-    $("#contactForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const nombre = $("#fNombre").value.trim();
-      const email = $("#fEmail").value.trim();
-      const servicio = $("#fServicio").value;
-      const mensaje = $("#fMensaje").value.trim();
-      const status = $("#formStatus");
-      const solicitud = `Nombre: ${nombre}\nEmail: ${email}\nServicio: ${servicio || "por definir"}\n\nMensaje:\n${mensaje}`;
-      const payload = { solicitud, origen: "web", extra: { nombre, email, servicio } };
-      if (META.webhookToken) payload.token = META.webhookToken;
-
-      // 1) Intentar enviar al software (webhook)
-      if (META.webhookUrl) {
-        status.textContent = "Enviando solicitud…";
-        status.style.color = "#8a8fa8";
-        try {
-          const ctrl = new AbortController();
-          const timer = setTimeout(() => ctrl.abort(), 5000);
-          const r = await fetch(META.webhookUrl, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-            signal: ctrl.signal,
-          });
-          clearTimeout(timer);
-          const data = await r.json().catch(() => ({}));
-          if (r.ok && data.ok) {
-            status.textContent = "✔ Solicitud enviada correctamente. Te contactaremos en menos de 24 h.";
-            status.style.color = "#059669";
-            $("#contactForm").reset();
-            return;
-          }
-          throw new Error(data.error || ("HTTP " + r.status));
-        } catch (err) {
-          status.textContent = "";
-        }
-      }
-
-      // 2) Fallback: abrir el correo con el mensaje preparado
-      const asunto = "Presupuesto — " + (servicio || "consulta general");
-      window.location.href = "mailto:" + META.email + "?subject=" + encodeURIComponent(asunto) + "&body=" + encodeURIComponent(solicitud);
-    });
   }
 
   /* ---------- nav móvil ---------- */
   function setupNav() {
-    $("#navToggle").addEventListener("click", () => $("#nav").classList.toggle("open"));
-    $$("#nav a").forEach((a) => a.addEventListener("click", () => $("#nav").classList.remove("open")));
+    $("#navToggle").addEventListener("click", () => {
+      const open = $("#nav").classList.toggle("open");
+      $("#navToggle").setAttribute("aria-expanded", String(open));
+    });
+    $$("#nav a").forEach((a) => a.addEventListener("click", () => { $("#nav").classList.remove("open"); $("#navToggle").setAttribute("aria-expanded", "false"); }));
     // Delegación: cierra el modal con CUALQUIER elemento [data-close] (estático o dinámico)
     $("#modal").addEventListener("click", (e) => {
       if (e.target.closest("[data-close]")) cerrarModal();
     });
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape") cerrarModal(); });
+    document.addEventListener("keydown", (e) => {
+      if (!$("#modal").classList.contains("open")) return;
+      if (e.key === "Escape") { e.preventDefault(); cerrarModal(); }
+      if (e.key === "Tab") {
+        const controls = $$("#modal button, #modal a[href]");
+        const first = controls[0], last = controls[controls.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    });
   }
 
   /* ---------- búsqueda ---------- */
